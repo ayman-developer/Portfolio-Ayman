@@ -129,6 +129,7 @@ img {
     position: relative;
     overflow: hidden;
     width: 100%;
+    padding-top: 5.5rem; /* Clear fixed header overlay spacing */
 }
 
 .container {
@@ -300,6 +301,7 @@ body.lg\:cursor-none .cursor-outline {
 .nav-list {
     display: flex;
     gap: 2rem;
+    list-style: none;
 }
 
 .nav-btn {
