@@ -98,7 +98,7 @@ const DEFAULT_CONTACT = {
     email: "mohammedayman7864@gmail.com",
     phone: "+91 7502949106",
     location: "Coimbatore, Tamil Nadu, India",
-    linkedin: "linkedin.com/in/-a-ayman",
+    linkedin: "www.linkedin.com/in/-a-ayman",
     github: "github.com/ayman-developer"
 };
 
