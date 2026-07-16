@@ -612,15 +612,7 @@ function renderAll() {
     const technicalSkills = document.getElementById('technical-skills-container');
     if (technicalSkills) {
         technicalSkills.innerHTML = store.skills.technical.map(skill => `
-            <div class="space-y-1.5 text-left">
-                <div class="flex justify-between text-sm font-semibold">
-                    <span class="text-cyan-300">${skill.name}</span>
-                    <span class="text-gray-400">${skill.progress}%</span>
-                </div>
-                <div class="skill-bar">
-                    <div class="skill-progress" style="width: ${skill.progress}%;"></div>
-                </div>
-            </div>
+            <span class="px-4 py-2 text-sm font-semibold bg-white/5 border border-white/10 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all">${skill.name}</span>
         `).join('');
     }
 
@@ -721,6 +713,9 @@ function renderAll() {
     document.getElementById('display-contact-location').textContent = store.contact.location;
     document.getElementById('display-contact-linkedin').href = `https://${store.contact.linkedin}`;
     document.getElementById('display-contact-github').href = `https://${store.contact.github}`;
+    
+    // Auto initialize scroll reveals on data render updates
+    initScrollReveal();
 }
 
 /* ==========================================
@@ -761,10 +756,10 @@ function openCmsEdit(section, id = null) {
             </div>
         `;
     } else if (section === 'skills') {
-        const techStr = store.skills.technical.map(s => `${s.name}:${s.progress}`).join(', ');
+        const techStr = store.skills.technical.map(s => s.name).join(', ');
         inputsMarkup = `
             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-400 uppercase">Technical Stack (Format: Name:Progress, e.g. Java:80, Python:85)</label>
+                <label class="text-xs font-bold text-gray-400 uppercase">Technical Stack (Comma separated, e.g. Java, Python, HTML)</label>
                 <input name="technical" type="text" value="${techStr}" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white focus:border-cyan-500 outline-none text-sm" required>
             </div>
             <div class="space-y-1.5">
@@ -964,11 +959,8 @@ function handleCmsSave(e) {
     } else if (activeEditSection === 'skills') {
         const techStr = data.get('technical');
         const technical = techStr.split(',').map(item => {
-            const parts = item.split(':');
-            return {
-                name: parts[0]?.trim() || 'Stack',
-                progress: parseInt(parts[1]?.trim() || '70', 10)
-            };
+            const name = item.trim();
+            return name ? { name, progress: 100 } : null;
         }).filter(Boolean);
         
         const nextSkills = {
@@ -1147,6 +1139,65 @@ function triggerDownloadFeedback(aElement) {
             aElement.style.pointerEvents = '';
         }, 1500);
     }, 1000);
+}
+
+/* ==========================================
+   SCROLL REVEAL / OBSERVER ENGINE
+   ========================================== */
+function initScrollReveal() {
+    // If the user prefers reduced motion, do not initialize reveal observers
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
+    const observerOptions = {
+        root: null, // relative to document viewport
+        rootMargin: '0px 0px -40px 0px', // trigger slightly before entering viewport
+        threshold: 0.05
+    };
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                
+                // Calculate stagger delay based on relative sibling index
+                const parent = el.parentElement;
+                if (parent) {
+                    const siblings = Array.from(parent.children);
+                    const index = siblings.indexOf(el);
+                    if (index !== -1) {
+                        el.style.transitionDelay = `${index * 80}ms`;
+                    }
+                }
+                
+                el.classList.add('revealed');
+                observer.unobserve(el);
+            }
+        });
+    }, observerOptions);
+
+    // Track all reveal targets
+    const elements = document.querySelectorAll(
+        '.reveal-on-scroll, ' +
+        '.education-card, ' +
+        '.timeline-item, ' +
+        '#technical-skills-container span, ' +
+        '#soft-skills-container span, ' +
+        '#language-skills-container span, ' +
+        '.project-card, ' +
+        '.cert-card, ' +
+        '.form-group, ' +
+        '.section-subtitle, ' +
+        '.snap-section h2'
+    );
+    
+    elements.forEach(el => {
+        el.classList.add('reveal-on-scroll');
+        if (!el.classList.contains('revealed')) {
+            revealObserver.observe(el);
+        }
+    });
 }
 
 // Mobile Touch Swipe Carousel Implementation

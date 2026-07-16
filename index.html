@@ -57,9 +57,13 @@
     <!-- Fixed Header / Navigation -->
     <header class="header">
         <div class="nav-container container">
-            <div class="logo font-black">
-                AYMAN
-            </div>
+            <button onclick="scrollToSection('about')" class="logo focus:outline-none" aria-label="Go to Top" style="display: inline-flex; align-items: center;">
+                <svg class="transition-transform hover:scale-105" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" width="36" height="36" style="filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.35));">
+                    <circle cx="50" cy="50" r="42" stroke="#00e5ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="35 15 150 15" fill="rgba(0, 229, 255, 0.05)" />
+                    <path d="M50 24 L32 72 H43 L50 52 L57 52 L64 72 H75 Z" fill="#ffffff" />
+                    <rect x="45" y="47" width="10" height="4.5" fill="#00e5ff" />
+                </svg>
+            </button>
             
             <div class="owner-status-badge" id="owner-status-badge">
                 <span class="pulse-indicator"></span>
@@ -258,7 +262,7 @@
                         <div class="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-cyan-500 to-transparent"></div>
                         <div class="text-3xl mb-4">💻</div>
                         <h3 class="text-xl font-bold text-white mb-4">Technical Stack</h3>
-                        <div class="space-y-4 w-full" id="technical-skills-container">
+                        <div class="flex flex-wrap gap-2.5" id="technical-skills-container">
                             <!-- Dynamic tags with custom progress bars -->
                         </div>
                     </div>

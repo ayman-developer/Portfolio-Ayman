@@ -130,6 +130,13 @@ img {
     overflow: hidden;
     width: 100%;
     padding-top: 5.5rem; /* Clear fixed header overlay spacing */
+    scroll-margin-top: 5.5rem;
+}
+
+.snap-section h2 {
+    line-height: 1.35 !important;
+    padding-top: 0.25em !important;
+    padding-bottom: 0.15em !important;
 }
 
 .container {
@@ -990,6 +997,22 @@ body.owner-active .owner-status-badge {
 }
 
 /* ==========================================
+   SCROLL REVEAL TRANSITIONS
+   ========================================== */
+.reveal-on-scroll {
+    opacity: 0 !important;
+    transform: translateY(24px) !important;
+    transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.75s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.revealed {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* ==========================================
    PREFERS-REDUCED-MOTION SUPPORT (GPU FRIENDLY)
    ========================================== */
 @media (prefers-reduced-motion: reduce) {
@@ -1004,5 +1027,10 @@ body.owner-active .owner-status-badge {
     }
     .snap-container {
         scroll-behavior: auto !important;
+    }
+    .reveal-on-scroll {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
     }
 }
