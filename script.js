@@ -147,6 +147,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up touch swipe carousels on mobile
     initMobileCarousels();
 
+    // Bind touch highlights for technical subpage skill cards
+    const skillCards = document.querySelectorAll('.glass-card-skills');
+    skillCards.forEach(card => {
+        card.addEventListener('touchstart', () => {
+            card.classList.add('active-touch');
+        }, { passive: true });
+        card.addEventListener('touchend', () => {
+            setTimeout(() => card.classList.remove('active-touch'), 300);
+        }, { passive: true });
+    });
+
+    // Check for anchor hash on load to trigger smooth scroll on redirect
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        setTimeout(() => {
+            const section = document.getElementById(hash);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 400);
+    }
+
     // Auto-play ambient video on user click to override browser autoplay blocks
     const playAmbientVideo = () => {
         const video = document.getElementById('hero-video');
@@ -281,9 +303,15 @@ function initTypingEffect() {
    SCROLLING CONTROLLER (SNAP HIGHLIGHTS)
    ========================================== */
 function scrollToSection(id) {
-    const section = document.getElementById(id);
-    if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
+    const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/') || !window.location.pathname.includes('.html');
+    
+    if (isHomePage) {
+        const section = document.getElementById(id);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+    } else {
+        window.location.href = `index.html#${id}`;
     }
 }
 
@@ -548,12 +576,16 @@ function renderAll() {
     const projCount = store.projects.length;
     const certCount = store.certifications.length;
     
-    document.getElementById('stat-projects').textContent = `🚀 ${projCount}+`;
-    document.getElementById('stat-certs').textContent = `📜 ${certCount}+`;
+    const statProj = document.getElementById('stat-projects');
+    if (statProj) statProj.textContent = `🚀 ${projCount}+`;
+    const statCert = document.getElementById('stat-certs');
+    if (statCert) statCert.textContent = `📜 ${certCount}+`;
     
     // Hero details
-    document.getElementById('display-hero-name').textContent = store.bio.name;
-    document.getElementById('display-bio-text').textContent = store.bio.text;
+    const heroName = document.getElementById('display-hero-name');
+    if (heroName) heroName.textContent = store.bio.name;
+    const bioText = document.getElementById('display-bio-text');
+    if (bioText) bioText.textContent = store.bio.text;
     
     // Education Cards
     const eduContainer = document.getElementById('education-list-container');
@@ -706,13 +738,20 @@ function renderAll() {
     }
 
     // Contact text updates
-    document.getElementById('display-contact-email').textContent = store.contact.email;
-    document.getElementById('display-contact-email-link').href = `mailto:${store.contact.email}`;
-    document.getElementById('display-contact-phone').textContent = store.contact.phone;
-    document.getElementById('display-contact-phone-link').href = `tel:${store.contact.phone.replace(/\s+/g, '')}`;
-    document.getElementById('display-contact-location').textContent = store.contact.location;
-    document.getElementById('display-contact-linkedin').href = `https://${store.contact.linkedin}`;
-    document.getElementById('display-contact-github').href = `https://${store.contact.github}`;
+    const cEmail = document.getElementById('display-contact-email');
+    if (cEmail) cEmail.textContent = store.contact.email;
+    const cEmailLink = document.getElementById('display-contact-email-link');
+    if (cEmailLink) cEmailLink.href = `mailto:${store.contact.email}`;
+    const cPhone = document.getElementById('display-contact-phone');
+    if (cPhone) cPhone.textContent = store.contact.phone;
+    const cPhoneLink = document.getElementById('display-contact-phone-link');
+    if (cPhoneLink) cPhoneLink.href = `tel:${store.contact.phone.replace(/\s+/g, '')}`;
+    const cLoc = document.getElementById('display-contact-location');
+    if (cLoc) cLoc.textContent = store.contact.location;
+    const cLinkedin = document.getElementById('display-contact-linkedin');
+    if (cLinkedin) cLinkedin.href = `https://${store.contact.linkedin}`;
+    const cGithub = document.getElementById('display-contact-github');
+    if (cGithub) cGithub.href = `https://${store.contact.github}`;
     
     // Auto initialize scroll reveals on data render updates
     initScrollReveal();
