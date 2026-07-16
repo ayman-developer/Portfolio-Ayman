@@ -29,16 +29,6 @@ const DEFAULT_EDUCATION = [
     { id: 3, degree: "📜 Secondary School (Class X)", school: "SMBM Matric Higher Secondary School, Dindigul", score: "100%", date: "2020 – 2021" }
 ];
 
-const DEFAULT_EXPERIENCE = [
-    {
-        id: 1,
-        title: "Intern – Data Analytics using Python",
-        company: "Micro Infotech, Coimbatore",
-        date: "Feb 2025",
-        description: "Developed Python-based analytical scripts reducing manual analysis time by ~30%. Built a feedback system boosting customer satisfaction by 10-15% and cutting complaints by ~20%.",
-        tags: ["Python", "Data Analytics", "Feedback Systems"]
-    }
-];
 
 const DEFAULT_PROJECTS = [
     {
@@ -109,7 +99,6 @@ let store = {
     bio: JSON.parse(localStorage.getItem('ayman_bio')) || DEFAULT_BIO,
     skills: JSON.parse(localStorage.getItem('ayman_skills')) || DEFAULT_SKILLS,
     education: JSON.parse(localStorage.getItem('ayman_education')) || DEFAULT_EDUCATION,
-    experience: JSON.parse(localStorage.getItem('ayman_experience')) || DEFAULT_EXPERIENCE,
     projects: JSON.parse(localStorage.getItem('ayman_projects')) || DEFAULT_PROJECTS,
     certifications: JSON.parse(localStorage.getItem('ayman_certifications')) || DEFAULT_CERTIFICATIONS,
     contact: JSON.parse(localStorage.getItem('ayman_contact')) || DEFAULT_CONTACT
@@ -135,11 +124,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.classList.add('light');
     }
 
-    // Set up custom cursor followers
-    initCursorTracker();
-
     // Set up typing subtitle words
     initTypingEffect();
+
+    // Global window scroll listener for subpages (hide header on scroll, show at absolute top)
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const header = document.querySelector('.header');
+        if (header) {
+            if (scrollTop > 50) {
+                header.classList.add('header-hidden');
+            } else {
+                header.classList.remove('header-hidden');
+            }
+        }
+    }, { passive: true });
 
     // Initial render
     renderAll();
@@ -209,54 +208,7 @@ function generateParticles(num) {
     }
 }
 
-/* ==========================================
-   CUSTOM CURSOR TRACKER
-   ========================================== */
-function initCursorTracker() {
-    const dot = document.getElementById('cursor-dot');
-    const outline = document.getElementById('cursor-outline');
-    if (!dot || !outline) return;
 
-    let mouseX = -100;
-    let mouseY = -100;
-    let outlineX = -100;
-    let outlineY = -100;
-
-    window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        dot.style.left = `${mouseX}px`;
-        dot.style.top = `${mouseY}px`;
-    });
-
-    // Inertial tracking for outline
-    function updateOutline() {
-        const dx = mouseX - outlineX;
-        const dy = mouseY - outlineY;
-        
-        outlineX += dx * 0.15;
-        outlineY += dy * 0.15;
-        
-        outline.style.left = `${outlineX}px`;
-        outline.style.top = `${outlineY}px`;
-        
-        requestAnimationFrame(updateOutline);
-    }
-    requestAnimationFrame(updateOutline);
-
-    // Expand cursor outline on interactive links
-    const bindCursorHover = () => {
-        const interactives = document.querySelectorAll('a, button, input, textarea, .cms-edit-trigger, select');
-        interactives.forEach(el => {
-            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-        });
-    };
-    
-    // Periodically re-bind to cover dynamically rendered buttons
-    bindCursorHover();
-    setInterval(bindCursorHover, 1000);
-}
 
 /* ==========================================
    TYPING WORDS ROTATING EFFECT
@@ -319,6 +271,16 @@ function handleSnapScroll(container) {
     const scrollTop = container.scrollTop;
     const viewportHeight = container.clientHeight;
     
+    // Hide header when scrolling, show only at absolute top (scrollTop <= 50)
+    const header = document.querySelector('.header');
+    if (header) {
+        if (scrollTop > 50) {
+            header.classList.add('header-hidden');
+        } else {
+            header.classList.remove('header-hidden');
+        }
+    }
+    
     // Highlight Back to Top button
     const backToTop = document.getElementById('back-to-top');
     if (backToTop) {
@@ -330,7 +292,7 @@ function handleSnapScroll(container) {
     }
 
     // Map section IDs to header links
-    const sections = ['about', 'education', 'experience', 'skills', 'projects', 'certifications', 'contact'];
+    const sections = ['about', 'education', 'skills', 'projects', 'certifications', 'contact'];
     sections.forEach(secId => {
         const el = document.getElementById(secId);
         if (el) {
@@ -611,34 +573,6 @@ function renderAll() {
         `).join('');
     }
 
-    // Experience timeline list
-    const expContainer = document.getElementById('experience-list-container');
-    if (expContainer) {
-        expContainer.innerHTML = store.experience.map(exp => `
-            <div class="timeline-item group relative">
-                <div class="timeline-dot">
-                    <div class="timeline-dot-inner"></div>
-                </div>
-                <button class="delete-item-btn" onclick="deleteItem('experience', ${exp.id})" aria-label="Delete">🗑️</button>
-                <div class="experience-card glass cms-edit-wrapper">
-                    <button class="cms-edit-trigger" onclick="openCmsEdit('experience', ${exp.id})" aria-label="Edit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                    </button>
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
-                        <div>
-                            <h3 class="text-xl md:text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">${exp.title}</h3>
-                            <p class="text-cyan-400 font-medium text-sm mt-1">${exp.company}</p>
-                        </div>
-                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-gray-400 inline-block w-fit">${exp.date}</span>
-                    </div>
-                    <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">${exp.description}</p>
-                    <div class="tag-list">
-                        ${exp.tags.map(t => `<span class="tech-tag tech-tag-cyan">${t}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
 
     // Skills lists
     const technicalSkills = document.getElementById('technical-skills-container');
@@ -832,34 +766,6 @@ function openCmsEdit(section, id = null) {
                 </div>
             </div>
         `;
-    } else if (section === 'experience') {
-        const exp = id ? store.experience.find(e => e.id === id) : { title: '', company: '', date: '', description: '', tags: [] };
-        inputsMarkup = `
-            <div class="grid md:grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-400 uppercase">Title</label>
-                    <input name="title" type="text" value="${exp.title}" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white focus:border-cyan-500 outline-none text-sm" required>
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-400 uppercase">Company</label>
-                    <input name="company" type="text" value="${exp.company}" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white focus:border-cyan-500 outline-none text-sm" required>
-                </div>
-            </div>
-            <div class="grid md:grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-400 uppercase">Date / Period</label>
-                    <input name="date" type="text" value="${exp.date}" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white focus:border-cyan-500 outline-none text-sm" required>
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-400 uppercase">Tags (Comma separated)</label>
-                    <input name="tags" type="text" value="${exp.tags.join(', ')}" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white focus:border-cyan-500 outline-none text-sm" required>
-                </div>
-            </div>
-            <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-400 uppercase">Description</label>
-                <textarea name="description" rows="4" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white focus:border-cyan-500 outline-none text-sm resize-none" required>${exp.description}</textarea>
-            </div>
-        `;
     } else if (section === 'project') {
         const proj = id ? store.projects.find(p => p.id === id) : { title: '', subtitle: '', date: '', description: '', tags: [], live: '', image: '', details: [] };
         inputsMarkup = `
@@ -1025,24 +931,6 @@ function handleCmsSave(e) {
         }
         saveToLocalStorage('education', list);
         showToast('✔️ Education node updated!');
-    } else if (activeEditSection === 'experience') {
-        let list = [...store.experience];
-        const tags = data.get('tags').split(',').map(t => t.trim()).filter(Boolean);
-        const item = {
-            id: activeEditId || Date.now(),
-            title: data.get('title'),
-            company: data.get('company'),
-            date: data.get('date'),
-            description: data.get('description'),
-            tags
-        };
-        if (activeEditId) {
-            list = list.map(e => e.id === activeEditId ? item : e);
-        } else {
-            list.push(item);
-        }
-        saveToLocalStorage('experience', list);
-        showToast('✔️ Experience node saved!');
     } else if (activeEditSection === 'project') {
         let list = [...store.projects];
         const tags = data.get('tags').split(',').map(t => t.trim()).filter(Boolean);
@@ -1104,10 +992,6 @@ function deleteItem(section, id) {
         const list = store.education.filter(e => e.id !== id);
         saveToLocalStorage('education', list);
         showToast('❌ Education node deleted.');
-    } else if (section === 'experience') {
-        const list = store.experience.filter(e => e.id !== id);
-        saveToLocalStorage('experience', list);
-        showToast('❌ Experience node deleted.');
     } else if (section === 'project') {
         const list = store.projects.filter(e => e.id !== id);
         saveToLocalStorage('projects', list);

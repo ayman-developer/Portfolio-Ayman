@@ -38,7 +38,7 @@
     <!-- Styling -->
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="lg:cursor-none subpage-body">
+<body class="subpage-body">
 
     <!-- Floating Background Particles & Blobs -->
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-black">
@@ -49,10 +49,6 @@
         <!-- Dynamic particles rising -->
         <div class="particles-container" id="particles-container"></div>
     </div>
-
-    <!-- Custom CursorFollower -->
-    <div class="cursor-dot" id="cursor-dot"></div>
-    <div class="cursor-outline" id="cursor-outline"></div>
 
     <!-- Fixed Header / Navigation -->
     <header class="header">
@@ -74,7 +70,6 @@
                 <ul class="nav-list">
                     <li><button onclick="scrollToSection('about')" class="nav-btn" id="nav-about">About</button></li>
                     <li><button onclick="scrollToSection('education')" class="nav-btn" id="nav-education">Education</button></li>
-                    <li><button onclick="scrollToSection('experience')" class="nav-btn" id="nav-experience">Experience</button></li>
                     <li><button onclick="scrollToSection('skills')" class="nav-btn active" id="nav-skills">Skills</button></li>
                     <li><button onclick="scrollToSection('projects')" class="nav-btn" id="nav-projects">Projects</button></li>
                     <li><button onclick="scrollToSection('certifications')" class="nav-btn" id="nav-certifications">Certifications</button></li>
@@ -112,7 +107,6 @@
         <div class="mobile-menu-links">
             <button onclick="scrollToSection('about'); toggleMobileMenu();" class="mobile-link">About</button>
             <button onclick="scrollToSection('education'); toggleMobileMenu();" class="mobile-link">Education</button>
-            <button onclick="scrollToSection('experience'); toggleMobileMenu();" class="mobile-link">Experience</button>
             <button onclick="scrollToSection('skills'); toggleMobileMenu();" class="mobile-link">Skills</button>
             <button onclick="scrollToSection('projects'); toggleMobileMenu();" class="mobile-link">Projects</button>
             <button onclick="scrollToSection('certifications'); toggleMobileMenu();" class="mobile-link">Certifications</button>

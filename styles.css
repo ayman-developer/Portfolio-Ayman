@@ -205,56 +205,12 @@ img {
 }
 
 /* ==========================================
-   CUSTOM DESKTOP CURSOR
+   HEADER HIDE TRANSITION
    ========================================== */
-.cursor-dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--accent-cyan);
-    position: fixed;
-    top: 0;
-    left: 0;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10000;
-    transform: translate(-50%, -50%);
-    mix-blend-mode: difference;
-    transition: width 0.2s, height 0.2s, background-color 0.2s;
-    display: none;
-}
-
-.cursor-outline {
-    width: 36px;
-    height: 36px;
-    border: 1.5px solid rgba(0, 229, 255, 0.4);
-    position: fixed;
-    top: 0;
-    left: 0;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    mix-blend-mode: difference;
-    transition: transform 0.1s ease-out, width 0.2s, height 0.2s, border-color 0.2s;
-    display: none;
-}
-
-body.lg\:cursor-none .cursor-dot,
-body.lg\:cursor-none .cursor-outline {
-    display: block;
-}
-
-.cursor-hover .cursor-dot {
-    width: 12px;
-    height: 12px;
-    background-color: #ffffff;
-}
-
-.cursor-hover .cursor-outline {
-    width: 50px;
-    height: 50px;
-    border-color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
+.header-hidden {
+    transform: translateY(-100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 /* ==========================================

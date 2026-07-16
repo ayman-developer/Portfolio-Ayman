@@ -38,7 +38,7 @@
     <!-- Styling -->
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="lg:cursor-none">
+<body>
 
     <!-- Floating Background Particles & Blobs -->
     <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-black">
@@ -49,10 +49,6 @@
         <!-- Dynamic particles rising -->
         <div class="particles-container" id="particles-container"></div>
     </div>
-
-    <!-- Custom CursorFollower -->
-    <div class="cursor-dot" id="cursor-dot"></div>
-    <div class="cursor-outline" id="cursor-outline"></div>
 
     <!-- Fixed Header / Navigation -->
     <header class="header">
@@ -74,7 +70,6 @@
                 <ul class="nav-list">
                     <li><button onclick="scrollToSection('about')" class="nav-btn active" id="nav-about">About</button></li>
                     <li><button onclick="scrollToSection('education')" class="nav-btn" id="nav-education">Education</button></li>
-                    <li><button onclick="scrollToSection('experience')" class="nav-btn" id="nav-experience">Experience</button></li>
                     <li><button onclick="scrollToSection('skills')" class="nav-btn" id="nav-skills">Skills</button></li>
                     <li><button onclick="scrollToSection('projects')" class="nav-btn" id="nav-projects">Projects</button></li>
                     <li><button onclick="scrollToSection('certifications')" class="nav-btn" id="nav-certifications">Certifications</button></li>
@@ -112,7 +107,6 @@
         <div class="mobile-menu-links">
             <button onclick="scrollToSection('about'); toggleMobileMenu();" class="mobile-link">About</button>
             <button onclick="scrollToSection('education'); toggleMobileMenu();" class="mobile-link">Education</button>
-            <button onclick="scrollToSection('experience'); toggleMobileMenu();" class="mobile-link">Experience</button>
             <button onclick="scrollToSection('skills'); toggleMobileMenu();" class="mobile-link">Skills</button>
             <button onclick="scrollToSection('projects'); toggleMobileMenu();" class="mobile-link">Projects</button>
             <button onclick="scrollToSection('certifications'); toggleMobileMenu();" class="mobile-link">Certifications</button>
@@ -229,22 +223,6 @@
             </div>
         </section>
 
-        <!-- SECTION 3: EXPERIENCE -->
-        <section id="experience" class="snap-section flex flex-col justify-center items-center px-6 py-20">
-            <div class="max-w-4xl w-full mx-auto reveal-on-scroll">
-                <div class="flex flex-wrap justify-between items-center mb-12">
-                    <div class="text-left">
-                        <span class="section-subtitle">Career Journey</span>
-                        <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Experience</h2>
-                    </div>
-                    <button class="btn btn-secondary btn-sm add-item-btn" onclick="openItemAdd('experience')">➕ Add Experience</button>
-                </div>
-
-                <div class="relative pl-8 border-l border-cyan-500/30 space-y-12 py-2" id="experience-list-container">
-                    <!-- Dynamic rendering from script.js -->
-                </div>
-            </div>
-        </section>
 
         <!-- SECTION 4: SKILLS -->
         <section id="skills" class="snap-section flex flex-col justify-center items-center px-6 py-20">
