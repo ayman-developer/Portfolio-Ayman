@@ -120,14 +120,13 @@ img {
 }
 
 .snap-section {
-    height: 100vh;
+    min-height: 100vh;
     scroll-snap-align: start;
     scroll-snap-stop: always;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    overflow: hidden;
     width: 100%;
     padding-top: 5.5rem; /* Clear fixed header overlay spacing */
     scroll-margin-top: 5.5rem;
@@ -137,6 +136,12 @@ img {
     line-height: 1.35 !important;
     padding-top: 0.25em !important;
     padding-bottom: 0.15em !important;
+}
+
+#certifications-list-container,
+#projects-list-container,
+#education-list-container {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
 }
 
 .container {
