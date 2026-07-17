@@ -9,18 +9,33 @@ const DEFAULT_BIO = {
 
 const DEFAULT_SKILLS = {
     technical: [
-        { name: "Java", progress: 80 },
-        { name: "MySQL", progress: 75 },
-        { name: "Python", progress: 85 },
+        // Frontend Development
         { name: "HTML", progress: 95 },
         { name: "CSS", progress: 90 },
         { name: "JavaScript", progress: 85 },
-        { name: "AWS Cloud", progress: 80 },
-        { name: "Docker & K8s", progress: 70 },
-        { name: "Git/CI-CD", progress: 85 }
+        // Backend Development
+        { name: "Java", progress: 80 },
+        // Database
+        { name: "PostgreSQL", progress: 75 },
+        // Cloud & DevOps
+        { name: "AWS (EC2, S3, IAM, Lambda, API Gateway)", progress: 80 },
+        { name: "Docker", progress: 75 },
+        { name: "Kubernetes", progress: 70 },
+        { name: "Git", progress: 85 },
+        { name: "GitHub", progress: 85 },
+        // Generative AI
+        { name: "Large Language Model (LLM)", progress: 90 },
+        { name: "RAG Frameworks", progress: 85 },
+        { name: "Prompt Engineering", progress: 90 },
+        // Other Tools and Platforms
+        { name: "Adobe Premiere Pro", progress: 80 },
+        { name: "Adobe Photoshop", progress: 85 },
+        { name: "Adobe After Effects", progress: 80 },
+        // Machine Learning
+        { name: "Supervised Machine Learning", progress: 80 }
     ],
-    soft: ["Adaptability", "Time Management", "Teamwork", "Communication", "Problem Solving"],
-    languages: ["Tamil", "English", "Urdu"]
+    soft: ["Adaptability", "Good Teamwork", "Time Management", "Communication"],
+    languages: ["Tamil", "English"]
 };
 
 const DEFAULT_EDUCATION = [
@@ -110,18 +125,15 @@ function saveToLocalStorage(key, val) {
     renderAll();
 }
 
-// Self-healing: automatically migrate Excel to JavaScript if present in storage cache
+// Self-healing: automatically migrate database and language lists to align with resume.pdf
 if (store.skills && store.skills.technical) {
-    let hasExcel = false;
-    store.skills.technical = store.skills.technical.map(skill => {
-        if (skill.name === "Excel") {
-            hasExcel = true;
-            return { name: "JavaScript", progress: 85 };
-        }
-        return skill;
-    });
-    if (hasExcel) {
-        localStorage.setItem('ayman_skills', JSON.stringify(store.skills));
+    const hasPostgres = store.skills.technical.some(s => s.name === "PostgreSQL");
+    const hasMySql = store.skills.technical.some(s => s.name === "MySQL");
+    const hasUrdu = store.skills.languages.includes("Urdu");
+    
+    if (!hasPostgres || hasMySql || hasUrdu) {
+        localStorage.setItem('ayman_skills', JSON.stringify(DEFAULT_SKILLS));
+        store.skills = DEFAULT_SKILLS;
     }
 }
 
@@ -589,21 +601,27 @@ function renderAll() {
             "Backend Development": [],
             "Database": [],
             "Cloud & DevOps": [],
-            "Other Tools": []
+            "Generative AI": [],
+            "Machine Learning": [],
+            "Other Tools and Platforms": []
         };
         
         store.skills.technical.forEach(skill => {
             const name = skill.name.toLowerCase();
-            if (name.includes('html') || name.includes('css') || name.includes('javascript') || name.includes('js')) {
+            if (name.includes('html') || name.includes('css') || name === 'javascript') {
                 categories["Frontend Development"].push(skill);
-            } else if (name.includes('java') || name.includes('python') || name.includes('c#') || name.includes('c++')) {
+            } else if (name === 'java' || name.includes('python')) {
                 categories["Backend Development"].push(skill);
-            } else if (name.includes('mysql') || name.includes('postgres') || name.includes('sql') || name.includes('mongodb') || name.includes('database')) {
+            } else if (name.includes('postgresql') || name.includes('mysql') || name.includes('postgres') || name.includes('sql') || name.includes('mongodb')) {
                 categories["Database"].push(skill);
-            } else if (name.includes('aws') || name.includes('docker') || name.includes('k8s') || name.includes('git') || name.includes('ci-cd') || name.includes('kubernetes') || name.includes('devops')) {
+            } else if (name.includes('aws') || name.includes('docker') || name.includes('kubernetes') || name.includes('k8s') || name === 'git' || name === 'github' || name === 'git & github') {
                 categories["Cloud & DevOps"].push(skill);
+            } else if (name.includes('llm') || name.includes('large language') || name.includes('rag') || name.includes('prompt')) {
+                categories["Generative AI"].push(skill);
+            } else if (name.includes('machine learning') || name.includes('supervised')) {
+                categories["Machine Learning"].push(skill);
             } else {
-                categories["Other Tools"].push(skill);
+                categories["Other Tools and Platforms"].push(skill);
             }
         });
         
@@ -612,7 +630,6 @@ function renderAll() {
             const list = categories[cat];
             if (list.length === 0) return;
             
-            let accent = 'cyan';
             let emoji = '💻';
             let borderClass = 'hover:border-cyan-500/30';
             let textClass = 'text-cyan-300 hover:border-cyan-500/40';
@@ -638,6 +655,16 @@ function renderAll() {
                 borderClass = 'hover:border-purple-500/30';
                 textClass = 'text-purple-300 hover:border-purple-500/40';
                 bgGrad = 'from-purple-500 to-transparent';
+            } else if (cat === "Generative AI") {
+                emoji = '🤖';
+                borderClass = 'hover:border-emerald-500/30';
+                textClass = 'text-emerald-300 hover:border-emerald-500/40';
+                bgGrad = 'from-emerald-500 to-transparent';
+            } else if (cat === "Machine Learning") {
+                emoji = '🧠';
+                borderClass = 'hover:border-amber-500/30';
+                textClass = 'text-amber-300 hover:border-amber-500/40';
+                bgGrad = 'from-amber-500 to-transparent';
             } else {
                 emoji = '🛠️';
                 borderClass = 'hover:border-gray-500/30';
