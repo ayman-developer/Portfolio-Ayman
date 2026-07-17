@@ -14,7 +14,7 @@ const DEFAULT_SKILLS = {
         { name: "Python", progress: 85 },
         { name: "HTML", progress: 95 },
         { name: "CSS", progress: 90 },
-        { name: "Excel", progress: 80 },
+        { name: "JavaScript", progress: 85 },
         { name: "AWS Cloud", progress: 80 },
         { name: "Docker & K8s", progress: 70 },
         { name: "Git/CI-CD", progress: 85 }
@@ -110,6 +110,21 @@ function saveToLocalStorage(key, val) {
     renderAll();
 }
 
+// Self-healing: automatically migrate Excel to JavaScript if present in storage cache
+if (store.skills && store.skills.technical) {
+    let hasExcel = false;
+    store.skills.technical = store.skills.technical.map(skill => {
+        if (skill.name === "Excel") {
+            hasExcel = true;
+            return { name: "JavaScript", progress: 85 };
+        }
+        return skill;
+    });
+    if (hasExcel) {
+        localStorage.setItem('ayman_skills', JSON.stringify(store.skills));
+    }
+}
+
 /* ==========================================
    INITIALIZATION & EVENT BINDINGS
    ========================================== */
@@ -127,17 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up typing subtitle words
     initTypingEffect();
 
-    // Global window scroll listener for subpages (hide header on scroll, show at absolute top)
+    // Global window scroll listener (hides header, handles active sections, toggles back-to-top)
     window.addEventListener('scroll', () => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const header = document.querySelector('.header');
-        if (header) {
-            if (scrollTop > 50) {
-                header.classList.add('header-hidden');
-            } else {
-                header.classList.remove('header-hidden');
-            }
-        }
+        handleSnapScroll(document.documentElement);
     }, { passive: true });
 
     // Initial render
@@ -268,8 +275,8 @@ function scrollToSection(id) {
 }
 
 function handleSnapScroll(container) {
-    const scrollTop = container.scrollTop;
-    const viewportHeight = container.clientHeight;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const viewportHeight = window.innerHeight;
     
     // Hide header when scrolling, show only at absolute top (scrollTop <= 50)
     const header = document.querySelector('.header');
@@ -292,7 +299,7 @@ function handleSnapScroll(container) {
     }
 
     // Map section IDs to header links
-    const sections = ['about', 'education', 'skills', 'projects', 'certifications', 'contact'];
+    const sections = ['about', 'education', 'skills', 'projects', 'certifications', 'personal-skills', 'contact'];
     sections.forEach(secId => {
         const el = document.getElementById(secId);
         if (el) {
@@ -574,12 +581,86 @@ function renderAll() {
     }
 
 
-    // Skills lists
-    const technicalSkills = document.getElementById('technical-skills-container');
-    if (technicalSkills) {
-        technicalSkills.innerHTML = store.skills.technical.map(skill => `
-            <span class="px-4 py-2 text-sm font-semibold bg-white/5 border border-white/10 hover:border-cyan-500/40 text-cyan-300 rounded-full transition-all">${skill.name}</span>
-        `).join('');
+    // Technical stack categories list
+    const techContainer = document.getElementById('technical-skills-categories');
+    if (techContainer) {
+        const categories = {
+            "Frontend Development": [],
+            "Backend Development": [],
+            "Database": [],
+            "Cloud & DevOps": [],
+            "Other Tools": []
+        };
+        
+        store.skills.technical.forEach(skill => {
+            const name = skill.name.toLowerCase();
+            if (name.includes('html') || name.includes('css') || name.includes('javascript') || name.includes('js')) {
+                categories["Frontend Development"].push(skill);
+            } else if (name.includes('java') || name.includes('python') || name.includes('c#') || name.includes('c++')) {
+                categories["Backend Development"].push(skill);
+            } else if (name.includes('mysql') || name.includes('postgres') || name.includes('sql') || name.includes('mongodb') || name.includes('database')) {
+                categories["Database"].push(skill);
+            } else if (name.includes('aws') || name.includes('docker') || name.includes('k8s') || name.includes('git') || name.includes('ci-cd') || name.includes('kubernetes') || name.includes('devops')) {
+                categories["Cloud & DevOps"].push(skill);
+            } else {
+                categories["Other Tools"].push(skill);
+            }
+        });
+        
+        let html = '';
+        Object.keys(categories).forEach(cat => {
+            const list = categories[cat];
+            if (list.length === 0) return;
+            
+            let accent = 'cyan';
+            let emoji = '💻';
+            let borderClass = 'hover:border-cyan-500/30';
+            let textClass = 'text-cyan-300 hover:border-cyan-500/40';
+            let bgGrad = 'from-cyan-500 to-transparent';
+            
+            if (cat === "Frontend Development") {
+                emoji = '🎨';
+                borderClass = 'hover:border-cyan-500/30';
+                textClass = 'text-cyan-300 hover:border-cyan-500/40';
+                bgGrad = 'from-cyan-500 to-transparent';
+            } else if (cat === "Backend Development") {
+                emoji = '⚙️';
+                borderClass = 'hover:border-blue-500/30';
+                textClass = 'text-blue-300 hover:border-blue-500/40';
+                bgGrad = 'from-blue-500 to-transparent';
+            } else if (cat === "Database") {
+                emoji = '💾';
+                borderClass = 'hover:border-indigo-500/30';
+                textClass = 'text-indigo-300 hover:border-indigo-500/40';
+                bgGrad = 'from-indigo-500 to-transparent';
+            } else if (cat === "Cloud & DevOps") {
+                emoji = '☁️';
+                borderClass = 'hover:border-purple-500/30';
+                textClass = 'text-purple-300 hover:border-purple-500/40';
+                bgGrad = 'from-purple-500 to-transparent';
+            } else {
+                emoji = '🛠️';
+                borderClass = 'hover:border-gray-500/30';
+                textClass = 'text-gray-300 hover:border-gray-500/40';
+                bgGrad = 'from-gray-500 to-transparent';
+            }
+            
+            html += `
+                <div class="glass p-6 rounded-3xl relative overflow-hidden group border border-white/5 ${borderClass} transition-all flex flex-col justify-between">
+                    <div class="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r ${bgGrad}"></div>
+                    <div>
+                        <div class="text-2xl mb-3">${emoji}</div>
+                        <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">${cat}</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${list.map(skill => `
+                                <span class="px-3 py-1.5 text-xs font-semibold bg-white/5 border border-white/10 ${textClass} rounded-full transition-all">${skill.name}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        techContainer.innerHTML = html;
     }
 
     const softSkills = document.getElementById('soft-skills-container');
@@ -1105,7 +1186,7 @@ function initScrollReveal() {
         '.reveal-on-scroll, ' +
         '.education-card, ' +
         '.timeline-item, ' +
-        '#technical-skills-container span, ' +
+        '#technical-skills-categories span, ' +
         '#soft-skills-container span, ' +
         '#language-skills-container span, ' +
         '.project-card, ' +
