@@ -162,6 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial render
     renderAll();
 
+    // Set up custom cursor followers (desktop only)
+    initCursorTracker();
+
     // Set up touch swipe carousels on mobile
     initMobileCarousels();
 
@@ -422,13 +425,11 @@ function viewProjectDetails(id) {
     const modal = document.getElementById('project-details-modal');
     const title = document.getElementById('project-details-title');
     const body = document.getElementById('project-details-body');
-    const live = document.getElementById('project-details-live');
     
     const project = store.projects.find(p => p.id === id);
-    if (!project || !modal || !title || !body || !live) return;
+    if (!project || !modal || !title || !body) return;
     
     title.textContent = `💼 ${project.title}`;
-    live.href = project.live;
     
     let listMarkup = project.details.map(b => `<li class="text-sm text-gray-300 leading-relaxed">• ${b}</li>`).join('');
     let tagsMarkup = project.tags.map(t => `<span class="tech-tag tech-tag-cyan">${t}</span>`).join('');
@@ -739,9 +740,8 @@ function renderAll() {
                                     ${proj.tags.slice(0, 3).map(t => `<span class="tech-tag">${t}</span>`).join('')}
                                     ${proj.tags.length > 3 ? `<span class="tech-tag">+${proj.tags.length - 3}</span>` : ''}
                                 </div>
-                                <div class="flex gap-3 pt-3 border-t border-white/5">
-                                    <button onclick="viewProjectDetails(${proj.id})" class="flex-1 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl text-xs font-bold transition-all text-center">Details</button>
-                                    <a href="${proj.live}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-bold transition-all text-center">🚀 Demo</a>
+                                <div class="flex pt-3 border-t border-white/5">
+                                    <button onclick="viewProjectDetails(${proj.id})" class="w-full py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl text-xs font-bold transition-all text-center">Details</button>
                                 </div>
                             </div>
                         </div>
@@ -840,7 +840,7 @@ function openCmsEdit(section, id = null) {
         const techStr = store.skills.technical.map(s => s.name).join(', ');
         inputsMarkup = `
             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-400 uppercase">Technical Stack (Comma separated, e.g. Java, Python, HTML)</label>
+                <label class="text-xs font-bold text-gray-400 uppercase">Technical Skills (Comma separated, e.g. Java, Python, HTML)</label>
                 <input name="technical" type="text" value="${techStr}" class="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white focus:border-cyan-500 outline-none text-sm" required>
             </div>
             <div class="space-y-1.5">
@@ -1347,4 +1347,55 @@ function updateSwipeFeedback(container) {
             card.style.boxShadow = '';
         }
     }
+}
+
+/* ==========================================
+   CUSTOM CURSOR FOLLOWER & HOVER EFFECT
+   ========================================== */
+function initCursorTracker() {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    
+    const dot = document.getElementById('cursor-dot');
+    const outline = document.getElementById('cursor-outline');
+    if (!dot || !outline) return;
+
+    let mouseX = -100;
+    let mouseY = -100;
+    let outlineX = -100;
+    let outlineY = -100;
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = `${mouseX}px`;
+        dot.style.top = `${mouseY}px`;
+    });
+
+    function updateOutline() {
+        const dx = mouseX - outlineX;
+        const dy = mouseY - outlineY;
+        
+        outlineX += dx * 0.15;
+        outlineY += dy * 0.15;
+        
+        outline.style.left = `${outlineX}px`;
+        outline.style.top = `${outlineY}px`;
+        
+        requestAnimationFrame(updateOutline);
+    }
+    requestAnimationFrame(updateOutline);
+
+    const bindCursorHover = () => {
+        const interactives = document.querySelectorAll('a, button, input, textarea, .cms-edit-trigger, select, [onclick], .nav-btn, .mobile-link, .add-item-btn, .tech-tag, .project-card, .cert-card, .education-card');
+        interactives.forEach(el => {
+            if (!el.dataset.cursorBound) {
+                el.dataset.cursorBound = 'true';
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+            }
+        });
+    };
+    
+    bindCursorHover();
+    setInterval(bindCursorHover, 1000);
 }

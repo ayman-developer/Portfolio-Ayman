@@ -1047,3 +1047,68 @@ body.subpage-body {
         display: none !important;
     }
 }
+
+/* ==========================================
+   CUSTOM CURSOR FOLLOWER & HOVER EFFECT
+   ========================================== */
+@media (hover: hover) and (pointer: fine) {
+    body, html {
+        cursor: none !important; /* Hide default cursor on desktop */
+    }
+    
+    a, button, input, textarea, select, .cms-edit-trigger, .project-card, .glass, .cert-card, .education-card, .nav-btn, .mobile-link, .add-item-btn, .tech-tag {
+        cursor: none !important; /* Hide default cursor on desktop when hovering over interactive elements */
+    }
+
+    .cursor-dot {
+        display: block !important;
+        width: 8px;
+        height: 8px;
+        background-color: #00e5ff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+        mix-blend-mode: difference;
+        transition: width 0.2s, height 0.2s, background-color 0.2s;
+    }
+
+    .cursor-outline {
+        display: block !important;
+        width: 32px;
+        height: 32px;
+        border: 1.5px solid rgba(0, 229, 255, 0.5);
+        position: fixed;
+        top: 0;
+        left: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        mix-blend-mode: difference;
+        transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1), width 0.2s, height 0.2s, border-color 0.2s;
+    }
+
+    /* Hover interactive states */
+    body.cursor-hover .cursor-dot {
+        width: 12px;
+        height: 12px;
+        background-color: #ffffff !important;
+    }
+
+    body.cursor-hover .cursor-outline {
+        width: 52px;
+        height: 52px;
+        border-color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* Fallback hiding on touch */
+.cursor-dot, .cursor-outline {
+    display: none;
+}
