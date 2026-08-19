@@ -75,6 +75,21 @@ const DEFAULT_PROJECTS = [
             "Enforced branch protection rules that block code merges failing security check.",
             "Reduces manual reviews by identifying syntax or format errors."
         ]
+    },
+    {
+        id: 3,
+        title: "Trimly (URL Shortener)",
+        subtitle: "High-Performance Link Management Platform",
+        date: "2026",
+        description: "A high-performance URL shortening and analytics platform featuring sub-10ms redirect latency, custom aliases, and real-time click tracking.",
+        tags: ["Java", "Spring Boot", "PostgreSQL", "Redis", "HTML", "CSS", "JavaScript"],
+        live: "https://github.com/ayman-developer/Trimly",
+        image: "placeholder-urlshortener",
+        details: [
+            "Engineered RESTful redirection microservice with custom alias support and collision-free hash generation.",
+            "Implemented Redis caching to cache frequent redirect requests, achieving sub-10ms latency.",
+            "Developed an analytical tracking dashboard capturing visitor geolocations, browsers, and timeline trends."
+        ]
     }
 ];
 
@@ -134,6 +149,15 @@ if (store.skills && store.skills.technical) {
     if (!hasPostgres || hasMySql || hasUrdu) {
         localStorage.setItem('ayman_skills', JSON.stringify(DEFAULT_SKILLS));
         store.skills = DEFAULT_SKILLS;
+    }
+}
+
+// Self-healing: automatically migrate projects list to include Trimly if missing in storage cache
+if (store.projects) {
+    const hasTrimly = store.projects.some(p => p.title.toLowerCase().includes("trimly"));
+    if (!hasTrimly) {
+        localStorage.setItem('ayman_projects', JSON.stringify(DEFAULT_PROJECTS));
+        store.projects = DEFAULT_PROJECTS;
     }
 }
 
