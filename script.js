@@ -88,7 +88,9 @@ const DEFAULT_PROJECTS = [
         details: [
             "Developed a responsive Single Page Application (SPA) frontend using React.js and Tailwind CSS.",
             "Engineered a Node.js & Express.js REST API with in-memory JavaScript Map storage for URL mapping.",
-            "Integrated qrcode.react for client-side dynamic QR code generation of shortened links."
+            "Integrated qrcode.react for client-side dynamic QR code generation of shortened links.",
+            "Designed a zero-database history log using browser LocalStorage to persist and display user-created links locally across sessions without account creation.",
+            "Implemented instant custom alias availability validation and target link safety checks dynamically during typing inputs."
         ]
     }
 ];
@@ -152,11 +154,12 @@ if (store.skills && store.skills.technical) {
     }
 }
 
-// Self-healing: automatically migrate projects list to include Trimly with correct tech stack
+// Self-healing: automatically migrate projects list to include Trimly with correct tech stack and innovative bullets
 if (store.projects) {
     const trimlyProj = store.projects.find(p => p.title.toLowerCase().includes("trimly"));
     const hasReact = trimlyProj && trimlyProj.tags.includes("React.js");
-    if (!trimlyProj || !hasReact) {
+    const hasFiveBullets = trimlyProj && trimlyProj.details && trimlyProj.details.length >= 5;
+    if (!trimlyProj || !hasReact || !hasFiveBullets) {
         localStorage.setItem('ayman_projects', JSON.stringify(DEFAULT_PROJECTS));
         store.projects = DEFAULT_PROJECTS;
     }
