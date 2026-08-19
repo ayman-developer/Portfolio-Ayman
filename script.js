@@ -79,16 +79,16 @@ const DEFAULT_PROJECTS = [
     {
         id: 3,
         title: "Trimly (URL Shortener)",
-        subtitle: "High-Performance Link Management Platform",
+        subtitle: "SPA Link Customization Platform",
         date: "2026",
-        description: "A high-performance URL shortening and analytics platform featuring sub-10ms redirect latency, custom aliases, and real-time click tracking.",
-        tags: ["Java", "Spring Boot", "PostgreSQL", "Redis", "HTML", "CSS", "JavaScript"],
+        description: "A modern Single Page Application (SPA) designed to shorten URLs, generate client-side QR codes, and manage link redirects.",
+        tags: ["React.js", "Tailwind CSS", "Node.js", "Express.js", "qrcode.react", "Git/GitHub"],
         live: "https://github.com/ayman-developer/Trimly",
         image: "placeholder-urlshortener",
         details: [
-            "Engineered RESTful redirection microservice with custom alias support and collision-free hash generation.",
-            "Implemented Redis caching to cache frequent redirect requests, achieving sub-10ms latency.",
-            "Developed an analytical tracking dashboard capturing visitor geolocations, browsers, and timeline trends."
+            "Developed a responsive Single Page Application (SPA) frontend using React.js and Tailwind CSS.",
+            "Engineered a Node.js & Express.js REST API with in-memory JavaScript Map storage for URL mapping.",
+            "Integrated qrcode.react for client-side dynamic QR code generation of shortened links."
         ]
     }
 ];
@@ -152,10 +152,11 @@ if (store.skills && store.skills.technical) {
     }
 }
 
-// Self-healing: automatically migrate projects list to include Trimly if missing in storage cache
+// Self-healing: automatically migrate projects list to include Trimly with correct tech stack
 if (store.projects) {
-    const hasTrimly = store.projects.some(p => p.title.toLowerCase().includes("trimly"));
-    if (!hasTrimly) {
+    const trimlyProj = store.projects.find(p => p.title.toLowerCase().includes("trimly"));
+    const hasReact = trimlyProj && trimlyProj.tags.includes("React.js");
+    if (!trimlyProj || !hasReact) {
         localStorage.setItem('ayman_projects', JSON.stringify(DEFAULT_PROJECTS));
         store.projects = DEFAULT_PROJECTS;
     }
