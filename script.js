@@ -87,10 +87,10 @@ const DEFAULT_PROJECTS = [
         image: "placeholder-urlshortener",
         details: [
             "Developed a responsive Single Page Application (SPA) frontend using React.js and Tailwind CSS.",
-            "Engineered a Node.js & Express.js REST API with in-memory JavaScript Map storage for URL mapping.",
+            "Engineered a Node.js & Express.js REST API for custom short-code routing and redirection.",
+            "Utilized high-speed In-Memory Storage (JavaScript Map) instead of a traditional database for URL mapping and code storage.",
             "Integrated qrcode.react for client-side dynamic QR code generation of shortened links.",
-            "Designed a zero-database history log using browser LocalStorage to persist and display user-created links locally across sessions without account creation.",
-            "Implemented instant custom alias availability validation and target link safety checks dynamically during typing inputs."
+            "Designed a zero-database history log using browser LocalStorage to persist and display user-created links locally across sessions without account creation."
         ]
     }
 ];
@@ -154,12 +154,12 @@ if (store.skills && store.skills.technical) {
     }
 }
 
-// Self-healing: automatically migrate projects list to include Trimly with correct tech stack and innovative bullets
+// Self-healing: automatically migrate projects list to include Trimly with correct tech stack and In-Memory details
 if (store.projects) {
     const trimlyProj = store.projects.find(p => p.title.toLowerCase().includes("trimly"));
     const hasReact = trimlyProj && trimlyProj.tags.includes("React.js");
-    const hasFiveBullets = trimlyProj && trimlyProj.details && trimlyProj.details.length >= 5;
-    if (!trimlyProj || !hasReact || !hasFiveBullets) {
+    const hasInMemory = trimlyProj && trimlyProj.details && trimlyProj.details.some(d => d.includes("In-Memory"));
+    if (!trimlyProj || !hasReact || !hasInMemory) {
         localStorage.setItem('ayman_projects', JSON.stringify(DEFAULT_PROJECTS));
         store.projects = DEFAULT_PROJECTS;
     }
