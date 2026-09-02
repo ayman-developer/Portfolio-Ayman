@@ -3,7 +3,7 @@
    ========================================== */
 const DEFAULT_BIO = {
     name: "Ayman A",
-    subtitle: ["Generative AI Specialist", "Cloud & DevOps Engineer", "Computer Science student", "Problem Solver"],
+    subtitle: ["Generative AI Developer", "Cloud & DevOps Engineer", "Computer Science student", "Problem Solver"],
     text: "Computer Science Engineering student passionate about developing intelligent AI-powered solutions. Hands-on experience in cloud architectures, LLMs, and modern full-stack development."
 };
 
@@ -162,6 +162,15 @@ if (store.projects) {
     if (!trimlyProj || !hasReact || !hasInMemory) {
         localStorage.setItem('ayman_projects', JSON.stringify(DEFAULT_PROJECTS));
         store.projects = DEFAULT_PROJECTS;
+    }
+}
+
+// Self-healing: automatically migrate bio subtitles if they contain "Specialist"
+if (store.bio && store.bio.subtitle) {
+    const hasSpecialist = store.bio.subtitle.some(s => s.toLowerCase().includes("specialist"));
+    if (hasSpecialist) {
+        store.bio.subtitle = store.bio.subtitle.map(s => s.replace(/Generative AI Specialist/gi, "Generative AI Developer").replace(/Specialist/gi, "Developer"));
+        localStorage.setItem('ayman_bio', JSON.stringify(store.bio));
     }
 }
 
